@@ -12,8 +12,6 @@ class GameCreate(BaseModel):
 class GameResponse(BaseModel):
     id: int 
     user_id: Optional[int]  
-    guest_username: Optional[str]
-
     status: GameStatus
     current_location: str
     
@@ -24,7 +22,7 @@ class GameResponse(BaseModel):
     caffeine: int
     market_traction: int
     travel_progress: int
-    
+
     created_at: datetime 
     updated_at: datetime 
 

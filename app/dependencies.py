@@ -6,6 +6,7 @@ from sqlalchemy import select
 
 from fastapi import Depends, HTTPException,status
 from app.database.session import get_session
+from app.services.game import GameService
 from app.services.user import UserService
 from app.services.auth import AuthService
 
@@ -56,4 +57,12 @@ async def get_current_user(session: SessionDep, token: str = Depends(oauth2_sche
 
 CurrentUserDep = Annotated[
     User, Depends(get_current_user)
+]
+
+def get_game_service(session: SessionDep):
+    return GameService(session)
+
+GameServiceDep = Annotated[
+    GameService,
+    Depends(get_game_service)
 ]
