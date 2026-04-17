@@ -28,7 +28,7 @@ class AuthService:
             )
 
 
-        token = create_access_token({"username":user.username,"email": normalized_email})
+        token = create_access_token({"user_id":user.id,"email": normalized_email})
         
         return token
 
