@@ -16,6 +16,7 @@ class Game(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None,primary_key=True)
     user_id: Optional[int]  = Field(default=None, foreign_key="users.id")
+    guest_username: Optional[str] = Field(default=None)
     cash: int 
     current_day: int
     team_energy: int
