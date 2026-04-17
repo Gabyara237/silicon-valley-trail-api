@@ -15,7 +15,7 @@ class Game(SQLModel, table=True):
     __tablename__= "games"
 
     id: Optional[int] = Field(default=None,primary_key=True)
-    user_id: int = Field(foreign_key="users.id")
+    user_id: Optional[int]  = Field(default=None, foreign_key="users.id")
     cash: int 
     current_day: int
     team_energy: int
