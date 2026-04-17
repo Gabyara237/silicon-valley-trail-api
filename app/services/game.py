@@ -48,6 +48,7 @@ class GameService:
 
 
     def create_guest_game(self, guest_username:str)-> dict:
+        guest_username = guest_username.strip()
         
         if not guest_username:
             raise HTTPException(
