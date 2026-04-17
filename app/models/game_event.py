@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
+from sqlalchemy import Column, DateTime
 from sqlmodel import SQLModel, Field
 
 
@@ -21,5 +22,4 @@ class GameEvent(SQLModel, table=True):
     player_choice: str
     day: int
     description: str
-    created_at: datetime = Field(default_factory= lambda:datetime.now(timezone.utc))
-
+    created_at: datetime = Field( sa_column=Column(DateTime(timezone=True)), default_factory=lambda: datetime.now(timezone.utc))

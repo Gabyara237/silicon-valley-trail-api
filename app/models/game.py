@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from sqlalchemy import Column, DateTime
 from enum import Enum
 from typing import Optional
 from sqlmodel import SQLModel, Field
@@ -24,5 +25,5 @@ class Game(SQLModel, table=True):
     travel_progress: int
     status: GameStatus = Field(default= GameStatus.in_progress)
     current_location: str
-    created_at: datetime = Field(default_factory= lambda:datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory= lambda:datetime.now(timezone.utc))
+    created_at: datetime = Field(sa_column=Column(DateTime(timezone=True)), default_factory=lambda: datetime.now(timezone.utc))    
+    updated_at: datetime = Field(sa_column=Column(DateTime(timezone=True)), default_factory=lambda: datetime.now(timezone.utc))
