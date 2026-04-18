@@ -12,3 +12,5 @@ async def user_game(service: GameServiceDep, current_user: CurrentUserDep):
 @router.post("/guest", response_model=GuestGameResponse)
 async def guest_game(game_data: GuestGameCreate, service: GameServiceDep):
     return service.create_guest_game(game_data.guest_username)
+
+
