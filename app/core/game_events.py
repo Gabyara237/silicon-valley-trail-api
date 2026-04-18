@@ -1,4 +1,5 @@
 import random
+from app.core.game_actions import GameAction
 from app.models.game_event import EventType
 
 EVENT_POOL = [
@@ -140,3 +141,9 @@ def get_random_event():
 
 def get_hackathon_outcome():
     return random.choice(HACKATHON_OUTCOMES)
+
+
+def maybe_get_event(action: GameAction):
+    if action != GameAction.TRAVEL:
+        return None
+    return get_random_event()

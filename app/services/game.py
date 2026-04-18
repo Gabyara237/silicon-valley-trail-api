@@ -4,11 +4,13 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 from app.core.game_actions import GAME_ACTION_EFFECTS, GameAction
-from app.core.game_events import GAME_EVENTS, get_hackathon_outcome
+from app.core.game_events import GAME_EVENTS, get_hackathon_outcome, maybe_get_event
 from app.core.game_settings import DEFAULT_GAME_STATE
 from app.core.game_utils import get_game_status, get_location_from_progress
+
+
 from app.models.game import Game, GameStatus
-from app.models.game_event import EventChoice, EventType
+from app.models.game_event import EventChoice, EventType, GameEvent
 from app.models.user import User
 
 
@@ -181,7 +183,7 @@ class GameService:
     
 
 
-    async def apply_action_by_id(self, game_id: int, action: GameAction) -> Game:
+    async def apply_action_by_id(self, game_id: int, action: GameAction) -> dict:
         game = await self.session.get(Game, game_id)
 
         if not game:
@@ -193,7 +195,7 @@ class GameService:
         return await self.apply_action(game, action)
     
 
-    async def apply_action(self, game: Game, action: GameAction )-> Game:
+    async def apply_action(self, game: Game, action: GameAction )-> dict:
 
         if game.status != GameStatus.in_progress:
             raise HTTPException(
@@ -207,11 +209,33 @@ class GameService:
             game.travel_progress,
             game.team_energy
         )
+
+        triggered_event = None
+        if game.status == GameStatus.in_progress:
+            triggered_event = maybe_get_event(action)
+
+        event_response = None
+
+        if triggered_event:
+            event_data = GAME_EVENTS[triggered_event]
+
+            event_response = {
+                "event_type": triggered_event,
+                "title": event_data["title"],
+                "description": event_data["description"],
+                "choices": event_data["choices"]
+            }
+
         
         try:
             await self.session.commit()
             await self.session.refresh(game)
-            return game
+            
+            return {
+                "game": game,
+                "event":event_response
+            }
+        
         except SQLAlchemyError:
             await self.session.rollback()
             raise HTTPException(
@@ -229,13 +253,34 @@ class GameService:
             )
         
         self._apply_action_effects_to_guest(game,action)
-        
+
         game["status"]= get_game_status(
             game["travel_progress"],
             game["team_energy"]
         )
+
+        triggered_event = None
+        if game["status"] == GameStatus.in_progress:
+            triggered_event = maybe_get_event(action)
+
+        event_response = None
         
-        return game
+        if triggered_event:
+            event_data = GAME_EVENTS[triggered_event]
+            event_response = {
+                "event_type": triggered_event,
+                "title": event_data["title"],
+                "description": event_data["description"],
+                "choices": event_data["choices"]
+            }
+        
+        return {
+                "game":game,
+                "event":event_response
+        }
+    
+    
+
 
     
     async def apply_event_to_user(self, game: Game, event:EventType, player_choice: EventChoice)-> Game:
@@ -252,7 +297,17 @@ class GameService:
             game.travel_progress,
             game.team_energy
         )
-        
+
+        event_record = GameEvent(
+            game_id=game.id,
+            event_type=event,
+            player_choice=player_choice,
+            day=game.current_day,
+            description=""
+        )
+
+        self.session.add(event_record)
+
         try:
             await self.session.commit()
             await self.session.refresh(game)
@@ -261,9 +316,26 @@ class GameService:
             await self.session.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail= "Could not apply event"
+                detail="Could not apply event"
             )
+        
 
 
         
+    def apply_event_to_guest(self, game: dict, event: EventType, player_choice: EventChoice ) -> dict:
+
+        if game["status"] != GameStatus.in_progress:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Game is already finished"
+            )
+        
+        self._apply_event_effects_to_guest(game,event,player_choice)
+        
+        game["status"]= get_game_status(
+            game["travel_progress"],
+            game["team_energy"]
+        )
+        
+        return game
     
