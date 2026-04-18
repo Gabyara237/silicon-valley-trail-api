@@ -124,6 +124,19 @@ class GameService:
         return game
     
 
+
+    async def apply_action_by_id(self, game_id: int, action: GameAction) -> Game:
+        game = await self.session.get(Game, game_id)
+
+        if not game:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Game not found"
+            )
+
+        return await self.apply_action(game, action)
+    
+
     async def apply_action(self, game: Game, action: GameAction )-> Game:
 
         if game.status != GameStatus.in_progress:
@@ -155,7 +168,7 @@ class GameService:
 
         if game["status"] != GameStatus.in_progress:
             raise HTTPException(
-                status_code=400,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Game is already finished"
             )
         
@@ -169,6 +182,7 @@ class GameService:
         return game
 
     
+
     
 
 

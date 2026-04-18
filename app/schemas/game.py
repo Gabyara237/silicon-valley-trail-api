@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.game_actions import GameAction
 from app.models.game import GameStatus
 from app.models.game import Location
 
@@ -43,3 +44,6 @@ class GuestGameResponse(BaseModel):
     market_traction: int
     travel_progress: int
 
+
+class GameActionRequest(BaseModel):
+    action: GameAction
