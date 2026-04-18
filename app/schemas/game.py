@@ -47,3 +47,7 @@ class GuestGameResponse(BaseModel):
 
 class GameActionRequest(BaseModel):
     action: GameAction
+
+class GuestActionRequest(BaseModel):
+    action: GameAction
+    game: dict

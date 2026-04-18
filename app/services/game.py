@@ -48,7 +48,7 @@ class GameService:
         game["bug_count"] += effects["bug_count"]
         game["caffeine"] += effects["caffeine"]
         game["market_traction"] += effects["market_traction"]
-        game["travel_progress"] += effects[action]["travel_progress"]
+        game["travel_progress"] += effects["travel_progress"]
         game["current_day"] += effects["current_day"]
         
 
