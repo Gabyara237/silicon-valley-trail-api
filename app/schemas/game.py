@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.core.game_actions import GameAction
 from app.models.game import GameStatus
 from app.models.game import Location
-from app.models.game_event import EventType
+from app.models.game_event import EventChoice, EventType
 
 
 
@@ -68,3 +68,14 @@ class GameActionResult(BaseModel):
 class GuestGameActionResult(BaseModel):
     game:GuestGameResponse
     event: TriggeredEventResponse | None = None
+
+
+class GameEventRequest(BaseModel):
+    event: EventType
+    player_choice: EventChoice
+
+
+class GuestGameEventRequest(BaseModel):
+    game: dict
+    event: EventType
+    player_choice: EventChoice

@@ -183,13 +183,19 @@ class GameService:
     
 
 
-    async def apply_action_by_id(self, game_id: int, action: GameAction) -> dict:
+    async def apply_action_by_id(self, game_id: int, action: GameAction, user: User) -> dict:
         game = await self.session.get(Game, game_id)
 
         if not game:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Game not found"
+            )
+
+        if game.user_id != user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized"
             )
 
         return await self.apply_action(game, action)
@@ -339,3 +345,19 @@ class GameService:
         
         return game
     
+
+    async def apply_event_by_id( self, game_id: int, event: EventType, player_choice: EventChoice, user: User) -> Game:
+        game = await self.session.get(Game, game_id)
+
+        if not game:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Game not found"
+            )
+        if game.user_id != user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized"
+            )
+        
+        return await self.apply_event_to_user(game, event, player_choice)
