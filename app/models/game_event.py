@@ -6,11 +6,20 @@ from sqlmodel import SQLModel, Field
 
 
 class EventType(str,Enum):
-    hackathon ="hackathon"
-    bugs= "bugs"
-    networking = "networking"
-    new_feature = "new_feature"
-    coffee_shortage = "coffee_shortage"
+    HACKATHON = "hackathon"
+    BUGS = "bugs"
+    NETWORKING = "networking"
+    FEATURE_REQUEST = "feature_request"
+    COFFEE_SHORTAGE = "coffee_shortage"
+
+class EventChoice(str, Enum):
+    ACCEPT = "accept"
+    REJECT = "reject"
+    ATTEND = "attend"
+    IGNORE = "ignore"
+    BUILD  = "build"
+    BUY = "buy"
+    SKIP = "skip"
 
 
 class GameEvent(SQLModel, table=True):
@@ -19,7 +28,8 @@ class GameEvent(SQLModel, table=True):
     id: Optional[int] = Field(default=None,primary_key=True)
     game_id: int = Field(foreign_key="games.id")
     event_type: EventType
-    player_choice: str
+    outcome: Optional[str] = None
+    player_choice: EventChoice
     day: int
     description: str
     created_at: datetime = Field( sa_column=Column(DateTime(timezone=True)), default_factory=lambda: datetime.now(timezone.utc))

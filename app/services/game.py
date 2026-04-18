@@ -4,9 +4,11 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 from app.core.game_actions import GAME_ACTION_EFFECTS, GameAction
+from app.core.game_events import GAME_EVENTS, get_hackathon_outcome
 from app.core.game_settings import DEFAULT_GAME_STATE
 from app.core.game_utils import get_game_status, get_location_from_progress
 from app.models.game import Game, GameStatus
+from app.models.game_event import EventChoice, EventType
 from app.models.user import User
 
 
@@ -65,6 +67,59 @@ class GameService:
         return game
 
 
+    def _apply_event_effects_to_user(self, game: Game, event: EventType, player_choice: EventChoice):
+        event_data = GAME_EVENTS[event]
+        choice_data = event_data["effects"][player_choice]
+
+        if "random_outcomes" in choice_data:
+            outcome = get_hackathon_outcome()
+            effects = choice_data["random_outcomes"][outcome]
+        else:
+            effects = choice_data
+
+        game.team_energy += effects["team_energy"]
+        game.cash += effects["cash"]
+        game.bug_count += effects["bug_count"]
+        game.caffeine += effects["caffeine"]
+        game.market_traction += effects["market_traction"]
+
+        game.team_energy = max(0, game.team_energy)
+        game.cash = max(0, game.cash)
+        game.bug_count = max(0, game.bug_count)
+        game.caffeine = max(0, game.caffeine)
+        game.market_traction = max(0, game.market_traction)
+
+        return game
+
+
+    def _apply_event_effects_to_guest(self, game: dict,event: EventType, player_choice : EventChoice):
+
+        event_data = GAME_EVENTS[event]
+        choice_data = event_data["effects"][player_choice]
+
+        if "random_outcomes" in choice_data:
+            outcome = get_hackathon_outcome()
+            effects = choice_data["random_outcomes"][outcome]
+        else:
+            effects = choice_data
+        
+        game["team_energy"] += effects["team_energy"]
+        game["cash"] += effects["cash"]
+        game["bug_count"] += effects["bug_count"]
+        game["caffeine"] += effects["caffeine"]
+        game["market_traction"] += effects["market_traction"]
+
+        game["team_energy"] = max(0, game["team_energy"])
+        game["cash"] = max(0, game["cash"])
+        game["bug_count"] = max(0, game["bug_count"])
+        game["caffeine"] = max(0, game["caffeine"])
+        game["market_traction"] = max(0, game["market_traction"])
+
+        return game
+
+
+
+
 
     async def create_game_for_user(self, current_user: User)-> Game:
 
@@ -97,6 +152,7 @@ class GameService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Could not create game"
             )
+        
 
     def create_guest_game(self, guest_username:str)-> dict:
         guest_username = guest_username.strip()
@@ -182,8 +238,31 @@ class GameService:
         return game
 
     
+    async def apply_event_to_user(self, game: Game, event:EventType, player_choice: EventChoice)-> Game:
 
-    
+        if game.status != GameStatus.in_progress:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Game is already finished"
+            )
+
+        self._apply_event_effects_to_user(game, event, player_choice)
+
+        game.status = get_game_status(
+            game.travel_progress,
+            game.team_energy
+        )
+        
+        try:
+            await self.session.commit()
+            await self.session.refresh(game)
+            return game
+        except SQLAlchemyError:
+            await self.session.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail= "Could not apply event"
+            )
 
 
         
