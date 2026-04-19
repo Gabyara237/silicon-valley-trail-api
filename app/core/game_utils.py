@@ -17,11 +17,16 @@ def get_location_from_progress(travel_progress:int)-> Location:
 
     return current_location
 
-def get_game_status(travel_progress: int, team_energy: int) -> GameStatus:
-    if travel_progress >= 100:
-        return GameStatus.won
+def get_game_status(travel_progress: int, team_energy: int, cash: int) -> GameStatus:
+    
     if team_energy <= 0:
         return GameStatus.lost
+    if cash <= 0:
+        return GameStatus.lost
+    
+    if travel_progress >= 100:
+        return GameStatus.won
+    
     return GameStatus.in_progress
 
 def get_coordinates_from_location(location: Location)-> LocationCoordinates:
