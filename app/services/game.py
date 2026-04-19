@@ -465,3 +465,38 @@ class GameService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Could not save game"
             )
+
+
+    async def resume_game(self, game_id: int, user:User)->Game:
+        game = await self.session.get(Game, game_id)
+
+        if not game: 
+            raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Game not found"
+        )
+
+        if game.user_id != user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized"
+            )
+        
+        if game.status != GameStatus.saved:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only saved games can be resumed"
+            )
+
+        game.status = GameStatus.in_progress
+
+        try:
+            await self.session.commit()
+            await self.session.refresh(game)
+            return game
+        except SQLAlchemyError:
+            await self.session.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Could not resume Game"
+            )

@@ -25,6 +25,10 @@ def apply_event_to_guest( request: GuestGameEventRequest, service: GameServiceDe
 async def save_game(game_id: int,service: GameServiceDep, current_user: CurrentUserDep):
     return await service.save_game(game_id,current_user)
 
+@router.post("/{game_id}/resume", response_model=GameResponse)
+async def resume_game(game_id: int, service: GameServiceDep, current_user: CurrentUserDep):
+    return await service.resume_game(game_id,current_user)
+
 @router.post("/{game_id}/actions", response_model=GameActionResult)
 async def apply_actions(game_id: int, request: GameActionRequest, service: GameServiceDep, current_user: CurrentUserDep):
     return await service.apply_action_by_id(game_id, request.action, current_user)
