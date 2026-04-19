@@ -1,5 +1,6 @@
 from app.core.game_settings import ROUTE_MILESTONES
 from app.models.game import Location, GameStatus
+from app.schemas.game import LocationCoordinates
 
 
 
@@ -21,3 +22,12 @@ def get_game_status(travel_progress: int, team_energy: int) -> GameStatus:
     if team_energy <= 0:
         return GameStatus.lost
     return GameStatus.in_progress
+
+def get_coordinates_from_location(location: Location)-> LocationCoordinates:
+    latitude = ROUTE_MILESTONES[location]["latitude"]
+    longitude = ROUTE_MILESTONES[location]["longitude"]
+
+    return {
+        "latitude": latitude,
+        "longitude": longitude
+    }

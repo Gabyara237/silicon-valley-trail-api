@@ -79,3 +79,14 @@ class GuestGameEventRequest(BaseModel):
     game: dict
     event: EventType
     player_choice: EventChoice
+
+
+class LocationCoordinates(BaseModel):
+    latitude: float
+    longitude: float
+
+
+class Weather(BaseModel):
+    temperature: float
+    unit: str
+    source:str
