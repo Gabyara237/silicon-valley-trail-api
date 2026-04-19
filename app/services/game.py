@@ -95,7 +95,7 @@ class GameService:
         return game
 
 
-    def _apply_event_effects_to_guest(self, game: dict,event: EventType, player_choice : EventChoice):
+    def _apply_event_effects_to_guest(self, game: dict, event: EventType, player_choice : EventChoice):
 
         event_data = GAME_EVENTS[event]
         choice_data = event_data["effects"][player_choice]
@@ -127,9 +127,15 @@ class GameService:
         game.caffeine+=effect["coffee"]
 
         return  effect["description"]
+    
 
+    def _apply_weather_effect_to_guest(self, game: dict, weather: Weather):
+        effect = get_weather_effect(weather.temperature)
 
+        game["team_energy"]+=effect["energy"]
+        game["caffeine"]+=effect["coffee"]
 
+        return  effect["description"]
 
 
     async def create_game_for_user(self, current_user: User)-> Game:
@@ -272,7 +278,7 @@ class GameService:
             )
     
 
-    def apply_action_to_guest(self, game: dict, action: GameAction ) -> dict:
+    async def apply_action_to_guest(self, game: dict, action: GameAction ) -> dict:
 
         if game["status"] != GameStatus.in_progress:
             raise HTTPException(
@@ -288,23 +294,35 @@ class GameService:
         )
 
         triggered_event = None
-        if game["status"] == GameStatus.in_progress:
-            triggered_event = maybe_get_event(action)
-
         event_response = None
+        weather_description = None
+        if game["status"] == GameStatus.in_progress:
+            location_coordinates = get_coordinates_from_location(game["current_location"])
+            weather = await get_weather(location_coordinates)
+
+            weather_description  = self._apply_weather_effect_to_guest(game, weather)
+
+            game["status"]= get_game_status(
+                game["travel_progress"],
+                game["team_energy"]
+            )
+
+            if game["status"] == GameStatus.in_progress:
+                triggered_event = maybe_get_event(action)
         
-        if triggered_event:
-            event_data = GAME_EVENTS[triggered_event]
-            event_response = {
-                "event_type": triggered_event,
-                "title": event_data["title"],
-                "description": event_data["description"],
-                "choices": event_data["choices"]
-            }
+                if triggered_event:
+                    event_data = GAME_EVENTS[triggered_event]
+                    event_response = {
+                        "event_type": triggered_event,
+                        "title": event_data["title"],
+                        "description": event_data["description"],
+                        "choices": event_data["choices"]
+                    }
         
         return {
                 "game":game,
-                "event":event_response
+                "event":event_response,
+                "weather_description": weather_description
         }
     
     

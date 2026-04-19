@@ -10,8 +10,8 @@ async def user_game(service: GameServiceDep, current_user: CurrentUserDep):
     return await service.create_game_for_user(current_user)
 
 @router.post("/guest/actions", response_model=GuestGameActionResult)
-def apply_actions_guest(request:GuestActionRequest, service: GameServiceDep):
-    return service.apply_action_to_guest(request.game, request.action)
+async def apply_actions_guest(request:GuestActionRequest, service: GameServiceDep):
+    return await service.apply_action_to_guest(request.game, request.action)
 
 @router.post("/guest", response_model=GuestGameResponse)
 def guest_game(game_data: GuestGameCreate, service: GameServiceDep):
