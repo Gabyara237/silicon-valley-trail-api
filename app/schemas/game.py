@@ -64,6 +64,7 @@ class GameActionResult(BaseModel):
     game: GameResponse
     event: TriggeredEventResponse | None = None
     weather_description: str | None = None
+    traffic_description: str | None = None
 
 
 class GuestGameActionResult(BaseModel):

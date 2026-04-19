@@ -3,17 +3,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 
+from app.core.environment import get_traffic_effect
 from app.core.game_actions import GAME_ACTION_EFFECTS, GameAction
 from app.core.game_events import GAME_EVENTS, get_hackathon_outcome, get_weather_effect, maybe_get_event
 from app.core.game_settings import DEFAULT_GAME_STATE
-from app.core.game_utils import get_coordinates_from_location, get_game_status, get_location_from_progress
+from app.core.game_utils import get_coordinates_from_location, get_game_status, get_location_from_progress, get_milestone_by_location
 
 
+from app.integrations.google_routes_client import get_traffic
 from app.integrations.weather_client import get_weather
 from app.models.game import Game, GameStatus
 from app.models.game_event import EventChoice, EventType, GameEvent
 from app.models.user import User
-from app.schemas.game import Weather
+from app.schemas.game import DataTraffic, Weather
 
 
 class GameService:
@@ -137,6 +139,15 @@ class GameService:
 
         return  effect["description"]
 
+    def _apply_traffic_effect_user(self, game: Game, data_traffic: DataTraffic):
+        effect = get_traffic_effect(data_traffic)
+
+        game.team_energy+=effect["energy"]
+        game.caffeine+= effect["coffee"]
+
+        return effect["description"]
+
+
 
     async def create_game_for_user(self, current_user: User)-> Game:
 
@@ -234,6 +245,7 @@ class GameService:
         triggered_event = None
         event_response = None
         weather_description = None
+        traffic_description = None
 
         if game.status == GameStatus.in_progress:
             location_coordinates = get_coordinates_from_location(game.current_location)
@@ -246,18 +258,37 @@ class GameService:
                 game.team_energy
             )
         
-            if game.status == GameStatus.in_progress:
-                triggered_event = maybe_get_event(action)
+        if game.status == GameStatus.in_progress:
 
-                if triggered_event:
-                    event_data = GAME_EVENTS[triggered_event]
+            current_milestone = get_milestone_by_location(game.current_location)
+            next_location = current_milestone["next_location"]
 
-                    event_response = {
-                        "event_type": triggered_event,
-                        "title": event_data["title"],
-                        "description": event_data["description"],
-                        "choices": event_data["choices"]
-                    }
+            if next_location is not None:
+                origin = get_coordinates_from_location(game.current_location)
+                destination = get_coordinates_from_location(next_location)
+
+
+                traffic = await get_traffic(origin, destination, game.current_location)
+
+                traffic_description = self._apply_traffic_effect_user(game,traffic)
+                
+                game.status= get_game_status(
+                    game.travel_progress,
+                    game.team_energy
+                )
+
+        if game.status == GameStatus.in_progress:
+            triggered_event = maybe_get_event(action)
+
+            if triggered_event:
+                event_data = GAME_EVENTS[triggered_event]
+
+                event_response = {
+                    "event_type": triggered_event,
+                    "title": event_data["title"],
+                    "description": event_data["description"],
+                    "choices": event_data["choices"]
+                }
 
         
         try:
@@ -267,7 +298,8 @@ class GameService:
             return {
                 "game": game,
                 "event":event_response,
-                "weather_description": weather_description
+                "weather_description": weather_description,
+                "traffic_description": traffic_description
             }
         
         except SQLAlchemyError:
