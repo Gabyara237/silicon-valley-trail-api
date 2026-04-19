@@ -4,14 +4,16 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 from app.core.game_actions import GAME_ACTION_EFFECTS, GameAction
-from app.core.game_events import GAME_EVENTS, get_hackathon_outcome, maybe_get_event
+from app.core.game_events import GAME_EVENTS, get_hackathon_outcome, get_weather_effect, maybe_get_event
 from app.core.game_settings import DEFAULT_GAME_STATE
-from app.core.game_utils import get_game_status, get_location_from_progress
+from app.core.game_utils import get_coordinates_from_location, get_game_status, get_location_from_progress
 
 
+from app.integrations.weather_client import get_weather
 from app.models.game import Game, GameStatus
 from app.models.game_event import EventChoice, EventType, GameEvent
 from app.models.user import User
+from app.schemas.game import Weather
 
 
 class GameService:
@@ -41,7 +43,6 @@ class GameService:
 
         return game
     
-
 
     def _apply_action_effects_to_guest(self, game: dict, action: GameAction):
 
@@ -118,6 +119,14 @@ class GameService:
         game["market_traction"] = max(0, game["market_traction"])
 
         return game
+
+    def _apply_weather_effect_user(self, game: Game, weather: Weather):
+        effect = get_weather_effect(weather.temperature)
+
+        game.team_energy+=effect["energy"]
+        game.caffeine+=effect["coffee"]
+
+        return  effect["description"]
 
 
 
@@ -217,20 +226,32 @@ class GameService:
         )
 
         triggered_event = None
-        if game.status == GameStatus.in_progress:
-            triggered_event = maybe_get_event(action)
-
         event_response = None
+        weather_description = None
 
-        if triggered_event:
-            event_data = GAME_EVENTS[triggered_event]
+        if game.status == GameStatus.in_progress:
+            location_coordinates = get_coordinates_from_location(game.current_location)
+            weather = await get_weather(location_coordinates)
 
-            event_response = {
-                "event_type": triggered_event,
-                "title": event_data["title"],
-                "description": event_data["description"],
-                "choices": event_data["choices"]
-            }
+            weather_description  = self._apply_weather_effect_user(game, weather)
+
+            game.status= get_game_status(
+                game.travel_progress,
+                game.team_energy
+            )
+        
+            if game.status == GameStatus.in_progress:
+                triggered_event = maybe_get_event(action)
+
+                if triggered_event:
+                    event_data = GAME_EVENTS[triggered_event]
+
+                    event_response = {
+                        "event_type": triggered_event,
+                        "title": event_data["title"],
+                        "description": event_data["description"],
+                        "choices": event_data["choices"]
+                    }
 
         
         try:
@@ -239,7 +260,8 @@ class GameService:
             
             return {
                 "game": game,
-                "event":event_response
+                "event":event_response,
+                "weather_description": weather_description
             }
         
         except SQLAlchemyError:
@@ -361,3 +383,4 @@ class GameService:
             )
         
         return await self.apply_event_to_user(game, event, player_choice)
+    

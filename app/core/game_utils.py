@@ -24,10 +24,12 @@ def get_game_status(travel_progress: int, team_energy: int) -> GameStatus:
     return GameStatus.in_progress
 
 def get_coordinates_from_location(location: Location)-> LocationCoordinates:
-    latitude = ROUTE_MILESTONES[location]["latitude"]
-    longitude = ROUTE_MILESTONES[location]["longitude"]
+    
+    for milestone in ROUTE_MILESTONES:
+        if milestone["location"] == location:
+            return LocationCoordinates(
+                latitude=milestone["latitude"],
+                longitude=milestone["longitude"]
+            )
 
-    return {
-        "latitude": latitude,
-        "longitude": longitude
-    }
+    raise ValueError(f"Location {location} not found in route milestones")

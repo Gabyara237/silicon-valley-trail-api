@@ -63,11 +63,13 @@ class TriggeredEventResponse(BaseModel):
 class GameActionResult(BaseModel):
     game: GameResponse
     event: TriggeredEventResponse | None = None
+    weather_description: str | None = None
 
 
 class GuestGameActionResult(BaseModel):
     game:GuestGameResponse
     event: TriggeredEventResponse | None = None
+    weather_description: str | None = None
 
 
 class GameEventRequest(BaseModel):

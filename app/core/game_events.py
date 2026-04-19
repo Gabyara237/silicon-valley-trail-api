@@ -147,3 +147,12 @@ def maybe_get_event(action: GameAction):
     if action != GameAction.TRAVEL:
         return None
     return get_random_event()
+
+
+def get_weather_effect(temperature: float):
+    if temperature < 10:
+        return {"energy":-1, "coffee":-2, "description": f"The current temperature is {temperature} °C, as it gets colder, your team started to drink more coffee and its energy has dropped a bit."}
+    elif temperature >28:
+        return{"energy": -2, "coffee":0, "description": f"The current temperature is {temperature} °C, as it is hot your team feels uncomfortable and its energy has dropped a bit."}
+    else:
+        return{"energy":+2, "coffee":0, "description": f"The current temperature is {temperature} °C, so your team is in high spirits and has increased its energy."}
