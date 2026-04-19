@@ -1,6 +1,7 @@
+import random
 from app.core.game_settings import ROUTE_MILESTONES
 from app.models.game import Location, GameStatus
-from app.schemas.game import LocationCoordinates
+from app.schemas.game import DataTraffic, LocationCoordinates
 
 
 
@@ -33,3 +34,29 @@ def get_coordinates_from_location(location: Location)-> LocationCoordinates:
             )
 
     raise ValueError(f"Location {location} not found in route milestones")
+
+
+def get_milestone_by_location(location: Location) -> dict:
+    for milestone in ROUTE_MILESTONES:
+        if milestone["location"] == location:
+            return milestone
+    raise ValueError(f"Location {location} not found in route milestones")
+
+
+def get_fallback_duration_seconds(distance_meters: int) -> int:
+    if distance_meters <= 5000:
+        return random.choice([300, 360, 420, 480, 540])  
+    elif distance_meters <= 9000:
+        return random.choice([600, 720, 840, 960])       
+    else:
+        return random.choice([1200, 1500, 1800, 2100])   
+
+
+def get_fallback_traffic(distance_meters: int) -> DataTraffic:
+    duration_seconds = get_fallback_duration_seconds(distance_meters)
+
+    return DataTraffic(
+        distance=distance_meters,
+        duration=f"{duration_seconds}s",
+        source="fallback"
+    )

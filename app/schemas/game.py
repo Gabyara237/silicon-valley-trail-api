@@ -92,3 +92,8 @@ class Weather(BaseModel):
     temperature: float
     unit: str
     source:str
+
+class DataTraffic(BaseModel):
+    distance: int
+    duration: str
+    source: str

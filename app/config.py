@@ -27,5 +27,13 @@ class SecuritySettings(BaseSettings):
 
     model_config = _base_config
 
+class GoogleApi(BaseSettings):
+    GOOGLE_API_KEY: str
+
+    model_config = _base_config 
+
+
 db_settings = DatabaseSettings()
 security_settings = SecuritySettings()
+google_api=GoogleApi()
+
