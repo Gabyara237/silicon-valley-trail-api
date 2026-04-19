@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import select
 
 
 from app.core.environment import get_traffic_effect
@@ -150,6 +151,10 @@ class GameService:
 
 
     async def create_game_for_user(self, current_user: User)-> Game:
+        active_game = await self.get_active_game(current_user)
+
+        if active_game:
+            active_game.status = GameStatus.abandoned
 
         game = Game(
             user_id = current_user.id, 
@@ -358,8 +363,6 @@ class GameService:
         }
     
     
-
-
     
     async def apply_event_to_user(self, game: Game, event:EventType, player_choice: EventChoice)-> Game:
 
@@ -399,7 +402,6 @@ class GameService:
         
 
 
-        
     def apply_event_to_guest(self, game: dict, event: EventType, player_choice: EventChoice ) -> dict:
 
         if game["status"] != GameStatus.in_progress:
@@ -503,6 +505,7 @@ class GameService:
         
 
     async def abandon_game(self, game_id: int, user: User)-> Game:
+
         game = await self.session.get(Game, game_id)
 
         if not game:
@@ -536,3 +539,13 @@ class GameService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Could not abandon game"
             )
+
+
+    async def get_active_game(self, user: User) -> Game | None:
+        stmt = select(Game).where(
+            Game.user_id == user.id,
+            Game.status.in_([GameStatus.in_progress, GameStatus.saved])
+        )
+
+        result = await self.session.execute(stmt)
+        return result.scalars().first()

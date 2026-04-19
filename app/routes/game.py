@@ -22,6 +22,21 @@ def apply_event_to_guest( request: GuestGameEventRequest, service: GameServiceDe
     return service.apply_event_to_guest(request.game, request.event, request.player_choice)
 
 
+@router.get("/active")
+async def get_active_game(service: GameServiceDep, current_user: CurrentUserDep):
+    active_game = await service.get_active_game(current_user)
+
+    if not active_game:
+        return {"active_game": None}
+
+    return {
+        "active_game": {
+            "id": active_game.id,
+            "status": active_game.status
+        }
+    }
+
+
 @router.post("/{game_id}/abandon", response_model=GameResponse)
 async def abandon_game(game_id: int, service: GameServiceDep, current_user:CurrentUserDep):
     return await service.abandon_game(game_id,current_user)
