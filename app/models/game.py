@@ -9,6 +9,7 @@ class GameStatus(str,Enum):
     won= "won"
     lost ="lost"
     abandoned = "abandoned"
+    saved = "saved"
 
 
 class Location(str, Enum):
