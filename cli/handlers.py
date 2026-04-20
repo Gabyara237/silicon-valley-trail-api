@@ -1,7 +1,7 @@
 import asyncio
-from cli.menus import post_login_menu
+from cli.menus import post_login_menu_no_active_game, post_login_menu_with_active_game
 from cli.prompts import prompt_email, prompt_password, prompt_username
-from cli.api_client import login_request, play_as_guest_request, register_request
+from cli.api_client import get_active_game_request, login_request, play_as_guest_request, register_request
 
 def handle_login():
     email = prompt_email()
@@ -15,18 +15,13 @@ def handle_login():
 
         print("\n✅ Login successful!\n")
 
-        choice = post_login_menu()
-
-        if choice == 1:
-            print("Start New Game selected")
-        elif choice == 2:
-            print("Resume Game selected")
-        elif choice == 3:
-            print("Logout selected")
-            return
+        handle_post_login_menu(token)
     else:
         print("\n Login failed")
-        print(response.json())
+        try:
+            print(response.json())
+        except Exception:
+            print(response.text)
 
 
 def handle_register():
@@ -54,10 +49,47 @@ def handle_play_as_guest():
         return game
 
     print("\nFailed to create guest game.\n")
-    print(response.json())
+    try:
+        print(response.json())
+    except Exception:
+        print(response.text)
     return None
 
 
 def handle_quit():
     print("\nThanks for playing Silicon Valley Trail. Goodbye!\n")
     raise SystemExit
+
+
+
+def handle_post_login_menu(token: str):
+    response = asyncio.run(get_active_game_request(token))
+
+    if response.status_code != 200:
+        print("\n Failed to retrieve active game.")
+        try:
+            print(response.json())
+        except Exception:
+            print(response.text)
+        return
+
+    data = response.json()
+    active_game = data.get("active_game")
+
+    if active_game is None:
+        choice = post_login_menu_no_active_game()
+
+        if choice == 1:
+            print("\nStart New Game selected")
+        elif choice == 2:
+            print("\nLogout selected")
+
+    else:
+        choice = post_login_menu_with_active_game()
+
+        if choice == 1:
+            print("\nResume Game selected")
+        elif choice == 2:
+            print("\nStart New Game selected")
+        elif choice == 3:
+            print("\nLogout selected")

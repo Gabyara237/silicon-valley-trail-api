@@ -25,13 +25,13 @@ def welcome_menu():
         print("\nInvalid option. Please choose a number between 1 and 5.\n")
 
 
-def post_login_menu():
+def post_login_menu_with_active_game():
     while True:
         print("\n====================================")
         print("        🎮 Game Menu 🎮")
         print("====================================\n")
-        print("1) Start New Game")
-        print("2) Resume Game")
+        print("1) Resume Game")
+        print("2) Start New Game")
         print("3) Logout")
 
         try:
@@ -44,3 +44,24 @@ def post_login_menu():
             return choice
 
         print("\nInvalid option. Please choose a number between 1 and 3.\n")
+
+
+
+def post_login_menu_no_active_game():
+    while True:
+        print("\n====================================")
+        print("        🎮 Game Menu 🎮")
+        print("====================================\n")
+        print("1) Start New Game")
+        print("2) Logout")
+
+        try:
+            choice = int(input("\nEnter your choice (1-2): "))
+        except ValueError:
+            print("\nInvalid input. Please enter a number.\n")
+            continue
+
+        if is_valid(choice, 1, 2):
+            return choice
+
+        print("\nInvalid option. Please choose a number between 1 and 2.\n")

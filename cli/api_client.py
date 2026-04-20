@@ -37,3 +37,14 @@ async def play_as_guest_request(username):
         url = f"{BASE_URL}/games/guest"
         response = await client.post(url,json=data)
         return response
+    
+
+async def get_active_game_request(token: str):
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/games/active"
+        response = await client.get(url, headers=headers)
+        return response
