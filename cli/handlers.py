@@ -44,3 +44,8 @@ def handle_play_as_guest():
     print("\nFailed to create guest game.\n")
     print(response.json())
     return None
+
+
+def handle_quit():
+    print("\nThanks for playing Silicon Valley Trail. Goodbye!\n")
+    raise SystemExit

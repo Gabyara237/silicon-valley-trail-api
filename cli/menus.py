@@ -11,6 +11,7 @@ def welcome_menu():
         print("2) Register")
         print("3) Play as Guest")
         print("4) View Rules")
+        print("5) Quit")
         
         try:
             choice = int(input("\nEnter your choice (1-4): "))
@@ -18,7 +19,7 @@ def welcome_menu():
             print("\nInvalid input. Please enter a number.\n")
             continue
 
-        if is_valid(choice,1,4):
+        if is_valid(choice,1,5):
             return choice
         
         print("\nInvalid option. Please choose a number between 1 and 4.\n")
