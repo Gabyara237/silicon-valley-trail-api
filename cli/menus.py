@@ -76,20 +76,21 @@ def game_menu():
         print("3) Marketing Push    - Boost traction, but costs cash")
         print("4) Travel            - Move forward, but traffic and weather may affect you")
         print("5) Buy Coffee        - Restore caffeine, but costs cash")
-        print("6) Save Game         - Save your current progress")
-        print("7) Abandon Game      - Give up this run")
-        print("8) Back              - Return to the previous menu\n")
+        print("6) Get AI Advice     - Ask for the best strategic next move")
+        print("7) Save Game         - Save your current progress")
+        print("8) Abandon Game      - Give up this run")
+        print("9) Back              - Return to the previous menu\n")
 
         try:
-            choice = int(input("Choose your action (1-8): "))
+            choice = int(input("Choose your action (1-9): "))
         except ValueError:
             print("\nInvalid input. Please enter a number.\n")
             continue
 
-        if is_valid(choice, 1, 8):
+        if is_valid(choice, 1, 9):
             return choice
 
-        print("\nInvalid option. Please choose a number between 1 and 8.\n")
+        print("\nInvalid option. Please choose a number between 1 and 9.\n")
 
 
 def event_choice_menu(event: dict):

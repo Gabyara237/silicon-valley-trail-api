@@ -123,3 +123,14 @@ async def abandon_game_request(game_id: int, token: str):
         url = f"{BASE_URL}/games/{game_id}/abandon"
         response = await client.post(url, headers=headers)
         return response
+    
+
+async def get_ai_advice_request(game_id: int, token: str):
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+    timeout = httpx.Timeout(30.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        url = f"{BASE_URL}/games/{game_id}/advice"
+        response = await client.post(url, headers=headers)
+        return response

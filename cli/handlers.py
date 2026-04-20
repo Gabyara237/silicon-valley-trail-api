@@ -97,7 +97,7 @@ def handle_post_login_menu(token: str):
 
         if choice == 1:
             display_option_title("Resume Game")
-            if status == "saved":
+            if status == "saved" or status == "in_progress":
                 game = handle_resume_game(game_id, token)
                 if game:
                     game_loop(game, token, False)

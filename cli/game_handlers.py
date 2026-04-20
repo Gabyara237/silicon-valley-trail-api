@@ -1,7 +1,7 @@
 
 import asyncio
 
-from cli.api_client import abandon_game_request, apply_event_request, perform_game_action_request, save_game_request
+from cli.api_client import abandon_game_request, apply_event_request, get_ai_advice_request, perform_game_action_request, save_game_request
 from cli.display import display_action_feedback, display_action_selected_message
 from cli.menus import event_choice_menu
 from cli.prompts import prompt_confirm_abandon
@@ -107,3 +107,38 @@ def handle_abandon_game(game: dict, token: str):
         print(response.text)
 
     return False
+
+
+def handle_ai_advice(game: dict, token: str):
+    game_id = game.get("id")
+
+    print("\n🤖 Asking your AI startup advisor...\n")
+
+    try:
+        response = asyncio.run(get_ai_advice_request(game_id, token))
+    except Exception as e:
+        print("==================================================")
+        print("🤖 AI STRATEGY ADVICE")
+        print("--------------------------------------------------")
+        print("AI advice is temporarily unavailable. Try again in a moment.")
+        print("==================================================\n")
+        input("Press Enter to continue...")
+        return
+
+    if response.status_code == 200:
+        data = response.json()
+        advice = data.get("advice")
+
+        print("==================================================")
+        print("🤖 AI STRATEGY ADVICE")
+        print("--------------------------------------------------")
+        print(advice)
+        print("==================================================\n")
+        input("Press Enter to continue...")
+        return
+
+    print("\nFailed to get AI advice.")
+    try:
+        print(response.json())
+    except Exception:
+        print(response.text)
