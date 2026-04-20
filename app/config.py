@@ -28,7 +28,9 @@ class SecuritySettings(BaseSettings):
     model_config = _base_config
 
 class GoogleApi(BaseSettings):
-    GOOGLE_API_KEY: str
+    GOOGLE_MAPS_API_KEY: str
+    GEMINI_API_KEY: str
+    GEMINI_MODEL: str = "gemini-2.5-flash"
 
     model_config = _base_config 
 

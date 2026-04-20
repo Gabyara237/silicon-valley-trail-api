@@ -578,3 +578,20 @@ class GameService:
         result = await self.session.execute(stmt)
         return result.scalars().first()
     
+
+    async def get_game_by_id_for_user(self, game_id: int, user):
+        game = await self.session.get(Game, game_id)
+
+        if not game:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Game not found",
+            )
+
+        if game.user_id != user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized",
+            )
+
+        return game

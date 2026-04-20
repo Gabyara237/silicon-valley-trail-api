@@ -5,7 +5,7 @@ from app.models.game import Location
 from app.schemas.game import DataTraffic, LocationCoordinates
 
 
-GOOGLE_API_KEY= google_api.GOOGLE_API_KEY
+GOOGLE_API_KEY= google_api.GOOGLE_MAPS_API_KEY
 
 async def get_traffic(origin:LocationCoordinates, destination:LocationCoordinates, current_location:Location)-> DataTraffic:
 
@@ -41,8 +41,7 @@ async def get_traffic(origin:LocationCoordinates, destination:LocationCoordinate
     async with httpx.AsyncClient() as client:
         try:
             response = await client.post(url, headers=headers, json=body)
-            # print(f"Traffic API status: {response.status_code}")
-            # print(f"Traffic API body: {response.text}")
+        
             response.raise_for_status()
             data = response.json()
             
@@ -65,7 +64,7 @@ async def get_traffic(origin:LocationCoordinates, destination:LocationCoordinate
             )
         
         except (httpx.HTTPError, ValueError):
-            # print("Using traffic fallback data")
+            
             milestone = get_milestone_by_location(current_location)
             fallback_distance = milestone["distance_to_next_meters"]
 
