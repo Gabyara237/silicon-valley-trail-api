@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.dependencies import CurrentUserDep, GameServiceDep
 from app.schemas.game import GameActionRequest, GameActionResult, GameEventRequest, GameResponse, GuestActionRequest, GuestGameActionResult, GuestGameCreate, GuestGameEventRequest, GuestGameResponse
+from app.services.ai_advice import AIAdviceService
 
 router = APIRouter(prefix="/games", tags=["Game"])
 
@@ -56,3 +57,13 @@ async def apply_actions(game_id: int, request: GameActionRequest, service: GameS
 @router.post("/{game_id}/events", response_model=GameResponse)
 async def apply_event_to_user(game_id: int, request: GameEventRequest, service: GameServiceDep, current_user: CurrentUserDep):
    return await service.apply_event_by_id(game_id,request.event,request.player_choice, current_user)
+
+
+
+@router.post("/{game_id}/advice")
+async def get_game_advice(game_id: int, service: GameServiceDep, current_user: CurrentUserDep,):
+    
+    game = await service.get_game_by_id_for_user(game_id, current_user)
+    advice_service = AIAdviceService()
+    advice = advice_service.get_advice(game)
+    return {"advice": advice}
