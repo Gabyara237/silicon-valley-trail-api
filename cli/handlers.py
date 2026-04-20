@@ -1,5 +1,6 @@
 import asyncio
 from cli.display import display_option_title
+from cli.game_loop import game_loop
 from cli.menus import post_login_menu_no_active_game, post_login_menu_with_active_game
 from cli.prompts import prompt_email, prompt_password, prompt_username
 from cli.api_client import create_new_game_request, get_active_game_request, login_request, play_as_guest_request, register_request
@@ -94,7 +95,8 @@ def handle_post_login_menu(token: str):
         elif choice == 2:
             display_option_title("Start New Game")
             game = handle_start_new_game(token)
-            print(game)
+            if game:
+                game_loop(game, token, True)
         elif choice == 3:
             print("\nLogout selected")
 
