@@ -1,7 +1,8 @@
 import asyncio
+from cli.display import display_option_title
 from cli.menus import post_login_menu_no_active_game, post_login_menu_with_active_game
 from cli.prompts import prompt_email, prompt_password, prompt_username
-from cli.api_client import get_active_game_request, login_request, play_as_guest_request, register_request
+from cli.api_client import create_new_game_request, get_active_game_request, login_request, play_as_guest_request, register_request
 
 def handle_login():
     email = prompt_email()
@@ -80,7 +81,8 @@ def handle_post_login_menu(token: str):
         choice = post_login_menu_no_active_game()
 
         if choice == 1:
-            print("\nStart New Game selected")
+            display_option_title("Start New Game")
+            game = handle_start_new_game(token)
         elif choice == 2:
             print("\nLogout selected")
 
@@ -90,6 +92,24 @@ def handle_post_login_menu(token: str):
         if choice == 1:
             print("\nResume Game selected")
         elif choice == 2:
-            print("\nStart New Game selected")
+            display_option_title("Start New Game")
+            game = handle_start_new_game(token)
+            print(game)
         elif choice == 3:
             print("\nLogout selected")
+
+
+def handle_start_new_game(token: str):
+    response= asyncio.run(create_new_game_request(token))
+
+    if response.status_code == 200:
+        game = response.json()
+        print("\nUser game created successfully!\n")
+        return game
+    
+    print("\nFailed to create new game.\n")
+    try:
+        print(response.json())
+    except Exception:
+        print(response.text)
+    return None

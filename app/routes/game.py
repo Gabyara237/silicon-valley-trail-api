@@ -5,7 +5,7 @@ from app.schemas.game import GameActionRequest, GameActionResult, GameEventReque
 
 router = APIRouter(prefix="/games", tags=["Game"])
 
-@router.post("", response_model=GameResponse)
+@router.post("/new", response_model=GameResponse)
 async def user_game(service: GameServiceDep, current_user: CurrentUserDep):
     return await service.create_game_for_user(current_user)
 

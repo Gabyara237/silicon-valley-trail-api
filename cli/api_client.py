@@ -48,3 +48,14 @@ async def get_active_game_request(token: str):
         url = f"{BASE_URL}/games/active"
         response = await client.get(url, headers=headers)
         return response
+    
+
+async def create_new_game_request(token: str):
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/games/new"
+        response = await client.post(url, headers=headers)
+        return response
