@@ -91,3 +91,14 @@ async def apply_event_request(game_id: int, event: str, player_choice: str, toke
         url = f"{BASE_URL}/games/{game_id}/events"
         response = await client.post(url, json=data, headers=headers)
         return response
+    
+
+async def save_game_request(game_id: int, token: str):
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/games/{game_id}/save"
+        response = await client.post(url, headers=headers)
+        return response

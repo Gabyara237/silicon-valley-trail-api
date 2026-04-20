@@ -1,7 +1,7 @@
 
 import asyncio
 
-from cli.api_client import apply_event_request, perform_game_action_request
+from cli.api_client import apply_event_request, perform_game_action_request, save_game_request
 from cli.display import display_action_feedback, display_action_selected_message
 from cli.menus import event_choice_menu
 
@@ -58,3 +58,24 @@ def handle_event(game: dict, event: dict, token: str):
         print(response.text)
 
     return game
+
+
+def handle_save_game(game: dict, token: str):
+    game_id = game.get("id")
+
+    print("\n💾 Saving game...\n")
+
+    response = asyncio.run(save_game_request(game_id, token))
+
+    if response.status_code == 200:
+        print("✅ Game saved successfully!\n")
+        input("Press Enter to return to the menu...")
+        return True 
+
+    print("\nFailed to save game.")
+    try:
+        print(response.json())
+    except Exception:
+        print(response.text)
+
+    return False

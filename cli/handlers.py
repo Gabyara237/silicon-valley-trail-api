@@ -84,6 +84,8 @@ def handle_post_login_menu(token: str):
         if choice == 1:
             display_option_title("Start New Game")
             game = handle_start_new_game(token)
+            if game:
+                game_loop(game, token, True)
         elif choice == 2:
             print("\nLogout selected")
 
