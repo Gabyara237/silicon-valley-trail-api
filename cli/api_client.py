@@ -134,3 +134,28 @@ async def get_ai_advice_request(game_id: int, token: str):
         url = f"{BASE_URL}/games/{game_id}/advice"
         response = await client.post(url, headers=headers)
         return response
+    
+
+async def perform_guest_action_request(game: dict, action: str):
+    data = {
+        "game": game,
+        "action": action
+    }
+
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/games/guest/actions"
+        response = await client.post(url, json=data)
+        return response
+
+
+async def apply_guest_event_request(game: dict, event: str, player_choice: str):
+    data = {
+        "game": game,
+        "event": event,
+        "player_choice": player_choice
+    }
+
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/games/guest/events"
+        response = await client.post(url, json=data)
+        return response
