@@ -1,6 +1,7 @@
 
 
 from cli.display import display_game_intro, display_game_status
+from cli.game_handlers import handle_game_action
 from cli.menus import game_menu
 
 
@@ -14,13 +15,13 @@ def game_loop(game: dict, token: str, is_new_game: bool = False):
         choice = game_menu()
 
         if choice == 1:
-            print("\n Rest selected ")
+            game = handle_game_action(game, "rest", token)
         elif choice == 2:
-            print("\n Work on Product selected ")
+            game = handle_game_action(game, "work_on_product", token)
         elif choice == 3:
-            print("\n Marketing Push selected ")
+            game = handle_game_action(game, "marketing_push", token)
         elif choice == 4:
-            print("\n Travel selected ")
+            game = handle_game_action(game, "travel", token)
         elif choice == 5:
             print("\n Save Game selected ")
         elif choice == 6:

@@ -41,6 +41,8 @@ async def get_traffic(origin:LocationCoordinates, destination:LocationCoordinate
     async with httpx.AsyncClient() as client:
         try:
             response = await client.post(url, headers=headers, json=body)
+            # print(f"Traffic API status: {response.status_code}")
+            # print(f"Traffic API body: {response.text}")
             response.raise_for_status()
             data = response.json()
             
@@ -63,6 +65,7 @@ async def get_traffic(origin:LocationCoordinates, destination:LocationCoordinate
             )
         
         except (httpx.HTTPError, ValueError):
+            # print("Using traffic fallback data")
             milestone = get_milestone_by_location(current_location)
             fallback_distance = milestone["distance_to_next_meters"]
 

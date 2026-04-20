@@ -115,3 +115,4 @@ def handle_start_new_game(token: str):
     except Exception:
         print(response.text)
     return None
+

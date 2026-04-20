@@ -244,7 +244,8 @@ class GameService:
 
         game.status= get_game_status(
             game.travel_progress,
-            game.team_energy
+            game.team_energy,
+            game.cash
         )
 
         triggered_event = None
@@ -260,10 +261,11 @@ class GameService:
 
             game.status= get_game_status(
                 game.travel_progress,
-                game.team_energy
+                game.team_energy,
+                game.cash
             )
         
-        if game.status == GameStatus.in_progress:
+        if game.status == GameStatus.in_progress and action == GameAction.TRAVEL:
 
             current_milestone = get_milestone_by_location(game.current_location)
             next_location = current_milestone["next_location"]
@@ -279,7 +281,8 @@ class GameService:
                 
                 game.status= get_game_status(
                     game.travel_progress,
-                    game.team_energy
+                    game.team_energy,
+                    game.cash
                 )
 
         if game.status == GameStatus.in_progress:
@@ -327,7 +330,8 @@ class GameService:
 
         game["status"]= get_game_status(
             game["travel_progress"],
-            game["team_energy"]
+            game["team_energy"],
+            game["cash"]
         )
 
         triggered_event = None
@@ -341,7 +345,8 @@ class GameService:
 
             game["status"]= get_game_status(
                 game["travel_progress"],
-                game["team_energy"]
+                game["team_energy"],
+                game["cash"]
             )
 
             if game["status"] == GameStatus.in_progress:
@@ -376,7 +381,8 @@ class GameService:
 
         game.status = get_game_status(
             game.travel_progress,
-            game.team_energy
+            game.team_energy,
+            game.cash
         )
 
         event_record = GameEvent(
@@ -414,7 +420,8 @@ class GameService:
         
         game["status"]= get_game_status(
             game["travel_progress"],
-            game["team_energy"]
+            game["team_energy"],
+            game["cash"]
         )
         
         return game

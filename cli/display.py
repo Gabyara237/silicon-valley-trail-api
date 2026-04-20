@@ -44,7 +44,7 @@ def display_game_intro():
     print(" ⚡ Team Energy       - Avoid burnout")
     print(" ☕ Caffeine          - Essential fuel for the grind")
     print(" 📈 Market Traction   - Build momentum and visibility")
-    print(" 🐛 Bug Count         - Keep your product stable")
+    print(" 🐛 Bug Count         - Keep your product stable\n")
 
     print("Every decision matters.")
     print("Make it to San Francisco… or risk losing everything.\n\n")
@@ -56,3 +56,53 @@ def display_game_intro():
 def display_press_enter_message():
     print("==============================================\n")
     input("Press Enter to begin your journey...")
+
+
+def display_action_feedback(result: dict):
+    weather_description = result.get("weather_description")
+    traffic_description = result.get("traffic_description")
+    event = result.get("event")
+
+    if not (weather_description or traffic_description or event):
+        return
+
+    print("\n==================================================")
+
+    if weather_description:
+        print("\n🌤️  WEATHER UPDATE")
+        print("--------------------------------------------------")
+        print(f"  {weather_description}\n")
+
+    if traffic_description:
+        print("\n🚦 TRAFFIC UPDATE")
+        print("--------------------------------------------------")
+        print(f"  {traffic_description}\n")
+
+    if event:
+        print("\n🎲 RANDOM EVENT")
+        print("--------------------------------------------------")
+        print(f"📌 {event.get('title')}\n")
+        print(f"  {event.get("description")}\n")
+
+    print("\n==================================================")
+
+    input("\nPress Enter to continue...")
+
+
+
+
+def display_action_selected_message(action: str):
+    messages = {
+        "rest": "🛌 You chose to rest. Your team takes a moment to recover.",
+        "work_on_product": "💻 You chose to work on the product. Time to build, fix, and improve.",
+        "marketing_push": "📢 You launch a marketing push to build excitement around your startup.",
+        "travel": "🚗 You chose to travel. Every mile brings you closer to San Francisco.",
+        "save": "💾 Progress saved. Your journey can continue later.",
+        "abandon": "❌ This run comes to an end.",
+    }
+
+    message = messages.get(action)
+
+    if message:
+        print(f"\n{message}")
+       
