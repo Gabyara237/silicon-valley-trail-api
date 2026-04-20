@@ -1,9 +1,9 @@
 import asyncio
 from cli.display import display_option_title
 from cli.game_loop import game_loop
-from cli.menus import post_login_menu_no_active_game, post_login_menu_with_active_game
+from cli.menus import  post_login_menu_no_active_game, post_login_menu_with_active_game
 from cli.prompts import prompt_email, prompt_password, prompt_username
-from cli.api_client import create_new_game_request, get_active_game_request, login_request, play_as_guest_request, register_request
+from cli.api_client import  create_new_game_request, get_active_game_request, login_request, play_as_guest_request, register_request
 
 def handle_login():
     email = prompt_email()
@@ -115,4 +115,7 @@ def handle_start_new_game(token: str):
     except Exception:
         print(response.text)
     return None
+
+
+
 

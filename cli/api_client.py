@@ -75,3 +75,19 @@ async def perform_game_action_request(game_id: int, action: str, token: str):
         url = f"{BASE_URL}/games/{game_id}/actions"
         response = await client.post(url, json=data, headers=headers)
         return response
+    
+
+async def apply_event_request(game_id: int, event: str, player_choice: str, token: str):
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    data = {
+        "event": event,
+        "player_choice": player_choice
+    }
+
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/games/{game_id}/events"
+        response = await client.post(url, json=data, headers=headers)
+        return response

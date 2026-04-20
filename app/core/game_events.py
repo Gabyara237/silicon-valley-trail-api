@@ -55,7 +55,7 @@ GAME_EVENTS = {
         "effects": {
             "accept": {
                 "cash": 0,
-                "market_traction": 0,
+                "market_traction": 5,
                 "team_energy": -5,
                 "bug_count": -2,
                 "caffeine": -1,

@@ -1,8 +1,9 @@
 
 import asyncio
 
-from cli.api_client import perform_game_action_request
+from cli.api_client import apply_event_request, perform_game_action_request
 from cli.display import display_action_feedback, display_action_selected_message
+from cli.menus import event_choice_menu
 
 
 def handle_game_action(game: dict, action: str, token: str):
@@ -17,11 +18,40 @@ def handle_game_action(game: dict, action: str, token: str):
 
         updated_game = result.get("game")
 
+        event = result.get("event")
+
         display_action_feedback(result)
-        
+
+        if event:
+            updated_game = handle_event(updated_game, event, token)
+
         return updated_game
 
+
     print("\nFailed to apply action.")
+    try:
+        print(response.json())
+    except Exception:
+        print(response.text)
+
+    return game
+
+
+
+def handle_event(game: dict, event: dict, token: str):
+    game_id = game.get("id")
+    event_type = event.get("event_type")
+
+    player_choice = event_choice_menu(event)
+
+    response = asyncio.run(apply_event_request(game_id, event_type, player_choice, token))
+
+    if response.status_code == 200:
+        updated_game = response.json()
+        print(f"\n You chose: {player_choice.capitalize()}\n")
+        return updated_game
+
+    print("\nFailed to apply event choice.")
     try:
         print(response.json())
     except Exception:

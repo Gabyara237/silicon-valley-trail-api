@@ -9,7 +9,6 @@ def display_game_status(game: dict):
     
 
     print(f"Day {game.get('current_day', 1)} | {game.get('current_location')}")
-    print("Your startup's humble garage HQ")
     
     print("==================================================")
     print(
@@ -61,9 +60,8 @@ def display_press_enter_message():
 def display_action_feedback(result: dict):
     weather_description = result.get("weather_description")
     traffic_description = result.get("traffic_description")
-    event = result.get("event")
 
-    if not (weather_description or traffic_description or event):
+    if not (weather_description or traffic_description):
         return
 
     print("\n==================================================")
@@ -78,13 +76,7 @@ def display_action_feedback(result: dict):
         print("--------------------------------------------------")
         print(f"  {traffic_description}\n")
 
-    if event:
-        print("\n🎲 RANDOM EVENT")
-        print("--------------------------------------------------")
-        print(f"📌 {event.get('title')}\n")
-        print(f"  {event.get("description")}\n")
-
-    print("\n==================================================")
+    print("==================================================")
 
     input("\nPress Enter to continue...")
 

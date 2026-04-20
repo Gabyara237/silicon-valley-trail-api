@@ -89,3 +89,27 @@ def game_menu():
             return choice
 
         print("\nInvalid option. Please choose a number between 1 and 7.\n")
+
+
+def event_choice_menu(event: dict):
+    choices = event.get("choices", [])
+
+    while True:
+        print("\n🎲 RANDOM EVENT")
+        print("==================================================")
+        print(f"📌 {event.get('title')}\n")
+        print(f"  {event.get("description")}\n")
+
+        for index, choice in enumerate(choices, start=1):
+            print(f"{index}) {choice.capitalize()}")
+
+        try:
+            user_choice = int(input(f"\nChoose an option (1-{len(choices)}): "))
+        except ValueError:
+            print("\nInvalid input. Please enter a number.\n")
+            continue
+
+        if 1 <= user_choice <= len(choices):
+            return choices[user_choice - 1]
+
+        print(f"\nInvalid option. Please choose a number between 1 and {len(choices)}.\n")
