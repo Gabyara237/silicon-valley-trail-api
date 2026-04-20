@@ -115,3 +115,30 @@ def event_choice_menu(event: dict):
             return choices[user_choice - 1]
 
         print(f"\nInvalid option. Please choose a number between 1 and {len(choices)}.\n")
+
+
+
+
+def guest_game_menu():
+    while True:
+        print("\n==================================================")
+        print("               What will you do?")
+        print("==================================================\n")
+        print("1) Rest              - Restore team energy, but use caffeine")
+        print("2) Work on Product   - Improve the product, reduce bugs, and spend energy")
+        print("3) Marketing Push    - Boost traction, but costs cash")
+        print("4) Travel            - Move forward, but traffic and weather may affect you")
+        print("5) Buy Coffee        - Restore caffeine, but costs cash")
+        print("6) Abandon Game      - Give up this run")
+        print("7) Back              - Return to the main menu\n")
+
+        try:
+            choice = int(input("Choose your action (1-7): "))
+        except ValueError:
+            print("\nInvalid input. Please enter a number.\n")
+            continue
+
+        if is_valid(choice, 1, 7):
+            return choice
+
+        print("\nInvalid option. Please choose a number between 1 and 7.\n")

@@ -2,7 +2,7 @@
 
 from cli.display import display_game_intro, display_game_over, display_game_status, display_victory
 from cli.game_handlers import handle_abandon_game, handle_ai_advice, handle_game_action, handle_save_game
-from cli.menus import game_menu
+from cli.menus import game_menu, guest_game_menu
 
 
 def handle_endgame(game: dict):
@@ -17,6 +17,8 @@ def handle_endgame(game: dict):
         return True
 
     return False
+
+
 
 def game_loop(game: dict, token: str, is_new_game: bool = False):
     if is_new_game:
@@ -59,4 +61,37 @@ def game_loop(game: dict, token: str, is_new_game: bool = False):
                 return
         elif choice == 9:
             print("\nReturning to main menu...\n")
+            return
+        
+
+
+def guest_game_loop(game: dict, is_new_game: bool = False):
+    if is_new_game:
+        display_game_intro()
+
+    while True:
+        display_game_status(game)
+
+        choice = guest_game_menu()
+
+        if choice == 1:
+            print("\nRest selected)\n")
+
+        elif choice == 2:
+            print("\nWork on Product selected\n")
+
+        elif choice == 3:
+            print("\nMarketing Push selected\n")
+
+        elif choice == 4:
+            print("\nTravel selected\n")
+
+        elif choice == 5:
+            print("\nBuy Coffee selected\n")
+
+        elif choice == 6:
+            print("\nAbandon Game selected\n")
+
+        elif choice == 7:
+            print("\nReturning to the main menu...\n")
             return
