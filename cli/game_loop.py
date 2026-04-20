@@ -1,7 +1,7 @@
 
 
 from cli.display import display_game_intro, display_game_over, display_game_status, display_victory
-from cli.game_handlers import handle_abandon_game, handle_ai_advice, handle_game_action, handle_save_game
+from cli.game_handlers import handle_abandon_game, handle_ai_advice, handle_game_action, handle_guest_abandon_game, handle_guest_game_action, handle_save_game
 from cli.menus import game_menu, guest_game_menu
 
 
@@ -75,32 +75,32 @@ def guest_game_loop(game: dict, is_new_game: bool = False):
         choice = guest_game_menu()
 
         if choice == 1:
-            game = handle_endgame(game, "rest")
+            game = handle_guest_game_action(game, "rest")
             if handle_endgame(game):
                 return
 
         elif choice == 2:
-            game = handle_endgame(game, "work_on_product")
+            game = handle_guest_game_action(game, "work_on_product")
             if handle_endgame(game):
                 return
 
         elif choice == 3:
-            game = handle_endgame(game, "marketing_push")
+            game = handle_guest_game_action(game, "marketing_push")
             if handle_endgame(game):
                 return
 
         elif choice == 4:
-            game = handle_endgame(game, "travel")
+            game = handle_guest_game_action(game, "travel")
             if handle_endgame(game):
                 return
 
         elif choice == 5:
-            game = handle_endgame(game, "buy_coffee")
+            game = handle_guest_game_action(game, "buy_coffee")
             if handle_endgame(game):
                 return
 
         elif choice == 6:
-            should_exit = handle_endgame()
+            should_exit = handle_guest_abandon_game()
             if should_exit:
                 return
 
