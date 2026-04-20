@@ -1,6 +1,6 @@
 import asyncio
 from cli.prompts import prompt_email, prompt_password, prompt_username
-from cli.api_client import login_request, register_request
+from cli.api_client import login_request, play_as_guest_request, register_request
 
 def handle_login():
     email = prompt_email()
@@ -29,3 +29,18 @@ def handle_register():
     else:
         print("\nRegistration failed")
         print(response.json())
+
+
+def handle_play_as_guest():
+    username = prompt_username()
+
+    response = asyncio.run(play_as_guest_request(username))
+
+    if response.status_code == 200:
+        game = response.json()
+        print("\nGuest game created successfully!\n")
+        return game
+
+    print("\nFailed to create guest game.\n")
+    print(response.json())
+    return None

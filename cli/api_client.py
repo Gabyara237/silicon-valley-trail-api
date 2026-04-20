@@ -27,3 +27,13 @@ async def register_request(username,email,password):
         url = f"{BASE_URL}/auth/sign-up"
         response = await client.post(url,json=data)
         return response
+
+async def play_as_guest_request(username):
+    data ={
+        "guest_username": username
+    }
+
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/games/guest"
+        response = await client.post(url,json=data)
+        return response

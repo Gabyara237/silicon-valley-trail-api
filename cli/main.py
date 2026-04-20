@@ -1,6 +1,6 @@
 
 from cli.display import display_option_title
-from cli.handlers import handle_login, handle_register
+from cli.handlers import handle_login, handle_play_as_guest, handle_register
 from cli.menus import welcome_menu
 
 
@@ -12,11 +12,16 @@ def run():
         handle_login()
 
     elif choice == 2:
-        display_option_title("Login")
+        display_option_title("Register")
         handle_register()
-        
+
     elif choice == 3:
-        print("Play as Guest selected")
+        display_option_title("Play as Guest")
+        game = handle_play_as_guest()
+
+        if game:
+            print("Starting game...")
+
     elif choice == 4:
         print("View Rules selected")
 
