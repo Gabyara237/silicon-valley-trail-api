@@ -162,3 +162,43 @@ def display_victory(game: dict):
     print("==================================================\n")
 
     input("Press Enter to return to the main menu...")
+
+
+
+
+def display_rules():
+    print("\n==================================================")
+    print("📜 GAME RULES")
+    print("==================================================\n")
+
+    print("🎯 Objective:")
+    print("Travel from San Jose to San Francisco and reach your final pitch.\n")
+
+    print("⚙️ Resources:")
+    print(" ✔︎ Cash              - Needed to survive and perform actions")
+    print(" ✔︎ Team Energy       - If it reaches 0, you lose")
+    print(" ✔︎ Caffeine          - Helps sustain your team")
+    print(" ✔︎ Market Traction   - Represents your startup’s momentum")
+    print(" ✔︎ Bug Count         - Too many bugs can hurt progress")
+    print(" ✔︎ Travel Progress   - Reach 100% to win\n")
+
+    print("🎮 Actions:")
+    print(" ✔︎ Rest              - Recover energy (uses caffeine)")
+    print(" ✔︎ Work on Product   - Reduce bugs, but costs energy")
+    print(" ✔︎ Marketing Push    - Increase traction, but costs cash")
+    print(" ✔︎ Travel            - Move forward (affected by weather & traffic)")
+    print(" ✔︎ Buy Coffee        - Restore caffeine (costs cash)\n")
+
+    print("⚠️ Game Over Conditions:")
+    print(" ✔︎ Team Energy reaches 0")
+    print(" ✔︎ Cash reaches 0\n")
+
+    print("🏆 Victory Condition:")
+    print(" ✔︎ Reach 100% travel progress (arrive in San Francisco)\n")
+
+    print("🎲 Events:")
+    print("Random events may occur during your journey and require decisions.\n")
+
+    print("==================================================\n")
+
+    input("Press Enter to return to the menu...")
