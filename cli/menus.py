@@ -75,9 +75,10 @@ def game_menu():
         print("2) Work on Product   - Improve the product, reduce bugs, and spend energy")
         print("3) Marketing Push    - Boost traction, but costs cash")
         print("4) Travel            - Move forward, but traffic and weather may affect you")
-        print("5) Save Game         - Save your current progress")
-        print("6) Abandon Game      - Give up this run")
-        print("7) Back              - Return to the previous menu\n")
+        print("5) Buy Coffee        - Restore caffeine, but costs cash")
+        print("6) Save Game         - Save your current progress")
+        print("7) Abandon Game      - Give up this run")
+        print("8) Back              - Return to the previous menu\n")
 
         try:
             choice = int(input("Choose your action (1-7): "))

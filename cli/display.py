@@ -60,6 +60,7 @@ def display_press_enter_message():
 def display_action_feedback(result: dict):
     weather_description = result.get("weather_description")
     traffic_description = result.get("traffic_description")
+    penalty_messages = result.get("penalty_messages", [])
 
     if not (weather_description or traffic_description):
         return
@@ -76,6 +77,12 @@ def display_action_feedback(result: dict):
         print("--------------------------------------------------")
         print(f"  {traffic_description}\n")
 
+    if penalty_messages:
+        print("\n⚠️ RESOURCE PENALTIES")
+        print("--------------------------------------------------")
+        for message in penalty_messages:
+            print(f"- {message}")
+
     print("==================================================")
 
     input("\nPress Enter to continue...")
@@ -89,6 +96,7 @@ def display_action_selected_message(action: str):
         "work_on_product": "💻 You chose to work on the product. Time to build, fix, and improve.",
         "marketing_push": "📢 You launch a marketing push to build excitement around your startup.",
         "travel": "🚗 You chose to travel. Every mile brings you closer to San Francisco.",
+        "buy_coffee": "☕ You bought coffee. The team is ready to keep going.",
         "save": "💾 Progress saved. Your journey can continue later.",
         "abandon": "❌ This run comes to an end.",
     }
@@ -98,3 +106,59 @@ def display_action_selected_message(action: str):
     if message:
         print(f"\n{message}")
        
+def display_game_over(game: dict):
+    print("\n==================================================")
+    print("                 💔 GAME OVER 💔")
+    print("==================================================\n")
+
+    print("Your startup could not survive the journey.\n")
+
+    print("Final status:")
+    print("--------------------------------------------------")
+    print(f"📍 Location: {game.get('current_location')}")
+    print(f"🛣️  Progress: {game.get('travel_progress')}%")
+    print(f"💰 Cash: {game.get('cash')}")
+    print(f"⚡ Team Energy: {game.get('team_energy')}")
+    print(f"☕ Caffeine: {game.get('caffeine')}")
+    print(f"📈 Market Traction: {game.get('market_traction')}")
+    print(f"🐛 Bug Count: {game.get('bug_count')}")
+    print("--------------------------------------------------\n")
+
+    if game.get("team_energy", 0) <= 0:
+        print("Reason: Your team ran out of energy.")
+    elif game.get("cash", 0) <= 0:
+        print("Reason: Your startup ran out of cash.")
+    else:
+        print("Reason: Your startup was unable to continue.")
+
+    print("\nBetter luck on the next run, founder.")
+    print("==================================================\n")
+
+    input("Press Enter to return to the main menu...")
+
+
+
+def display_victory(game: dict):
+    print("\n==================================================")
+    print("         🎉 YOU MADE IT TO SAN FRANCISCO! 🎉")
+    print("==================================================\n")
+
+    print("Your startup reached San Francisco and made it")
+    print("to the big pitch. Congratulations, founder!\n")
+
+    print("Final status:")
+    print("--------------------------------------------------")
+    print(f"📍 Final Location: {game.get('current_location')}")
+    print(f"🛣️ Progress: {game.get('travel_progress')}%")
+    print(f"💰 Cash: {game.get('cash')}")
+    print(f"⚡ Team Energy: {game.get('team_energy')}")
+    print(f"☕ Caffeine: {game.get('caffeine')}")
+    print(f"📈 Market Traction: {game.get('market_traction')}")
+    print(f"🐛 Bug Count: {game.get('bug_count')}")
+    print("--------------------------------------------------\n")
+
+    print("You survived the journey and kept your startup alive.")
+    print("That pitch could change everything.")
+    print("==================================================\n")
+
+    input("Press Enter to return to the main menu...")

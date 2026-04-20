@@ -148,7 +148,18 @@ class GameService:
 
         return effect["description"]
 
+    def _apply_resource_penalties(self, game: Game) -> list[str]:
+            penalties = []
 
+            if game.market_traction <= 0:
+                game.team_energy -= 10
+                penalties.append("Your startup lost momentum. Team energy dropped by 10.")
+
+            if game.caffeine <= 0:
+                game.team_energy -= 5
+                penalties.append("Your team ran out of caffeine. Team energy dropped by 5.")
+
+            return penalties
 
     async def create_game_for_user(self, current_user: User)-> Game:
         active_game = await self.get_active_game(current_user)
@@ -252,6 +263,7 @@ class GameService:
         event_response = None
         weather_description = None
         traffic_description = None
+        penalty_messages=[]
 
         if game.status == GameStatus.in_progress:
             location_coordinates = get_coordinates_from_location(game.current_location)
@@ -286,6 +298,14 @@ class GameService:
                 )
 
         if game.status == GameStatus.in_progress:
+            penalty_messages = self._apply_resource_penalties(game)
+
+            game.status = get_game_status(
+                game.travel_progress,
+                game.team_energy,
+                game.cash
+            )
+        if game.status == GameStatus.in_progress:
             triggered_event = maybe_get_event(action)
 
             if triggered_event:
@@ -307,7 +327,8 @@ class GameService:
                 "game": game,
                 "event":event_response,
                 "weather_description": weather_description,
-                "traffic_description": traffic_description
+                "traffic_description": traffic_description,
+                "penalty_messages":penalty_messages
             }
         
         except SQLAlchemyError:
@@ -378,7 +399,7 @@ class GameService:
             )
 
         self._apply_event_effects_to_user(game, event, player_choice)
-
+        self._apply_resource_penalties(game)
         game.status = get_game_status(
             game.travel_progress,
             game.team_energy,
@@ -556,3 +577,4 @@ class GameService:
 
         result = await self.session.execute(stmt)
         return result.scalars().first()
+    

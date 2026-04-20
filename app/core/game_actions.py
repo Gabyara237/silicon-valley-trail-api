@@ -6,7 +6,8 @@ class GameAction(str, Enum):
     REST = "rest"
     WORK_ON_PRODUCT = "work_on_product"
     MARKETING_PUSH = "marketing_push"
-    TRAVEL = "travel"
+    TRAVEL = "travel",
+    BUY_COFFEE= "buy_coffee"
 
 
 GAME_ACTION_EFFECTS = {
@@ -46,4 +47,14 @@ GAME_ACTION_EFFECTS = {
         "travel_progress": TRAVEL_STEP,
         "current_day": 1,
     },
+    GameAction.BUY_COFFEE: {
+        "team_energy": 2,
+        "cash": -10,
+        "bug_count": 0,
+        "caffeine": 15,
+        "market_traction": 0,
+        "travel_progress": 0,
+        "current_day": 1,
+    },
+
 }
