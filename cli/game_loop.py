@@ -1,7 +1,7 @@
 
 
 from cli.display import display_game_intro, display_game_over, display_game_status, display_victory
-from cli.game_handlers import handle_game_action, handle_save_game
+from cli.game_handlers import handle_abandon_game, handle_game_action, handle_save_game
 from cli.menus import game_menu
 
 
@@ -52,7 +52,9 @@ def game_loop(game: dict, token: str, is_new_game: bool = False):
             if should_exit:
                 return
         elif choice == 7:
-            print("\n Abandon Game selected (coming soon)")
+            should_exit = handle_abandon_game(game, token)
+            if should_exit:
+                return
         elif choice == 8:
             print("\nReturning to main menu...\n")
             return

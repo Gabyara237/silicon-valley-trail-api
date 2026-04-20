@@ -1,9 +1,10 @@
 
 import asyncio
 
-from cli.api_client import apply_event_request, perform_game_action_request, save_game_request
+from cli.api_client import abandon_game_request, apply_event_request, perform_game_action_request, save_game_request
 from cli.display import display_action_feedback, display_action_selected_message
 from cli.menus import event_choice_menu
+from cli.prompts import prompt_confirm_abandon
 
 
 def handle_game_action(game: dict, action: str, token: str):
@@ -73,6 +74,33 @@ def handle_save_game(game: dict, token: str):
         return True 
 
     print("\nFailed to save game.")
+    try:
+        print(response.json())
+    except Exception:
+        print(response.text)
+
+    return False
+
+
+def handle_abandon_game(game: dict, token: str):
+    confirm = prompt_confirm_abandon()
+
+    if not confirm:
+        print("\nAbandon cancelled.\n")
+        return False
+
+    game_id = game.get("id")
+
+    print("\nAbandoning game...\n")
+
+    response = asyncio.run(abandon_game_request(game_id, token))
+
+    if response.status_code == 200:
+        print("✅ Game abandoned successfully.\n")
+        input("Press Enter to return to the menu...")
+        return True
+
+    print("\nFailed to abandon game.")
     try:
         print(response.json())
     except Exception:

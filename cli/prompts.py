@@ -30,3 +30,17 @@ def prompt_username():
             return username
         
         print("Username must be at least 3 characters.\n")
+
+def prompt_confirm_abandon():
+    print("\n==================================================")
+    print("🚨 ABANDON YOUR STARTUP?")
+    print("==================================================\n")
+    print("This decision cannot be undone.\n")
+
+    while True:
+        choice = input("Do you really want to abandon your startup? (y/n): ").strip().lower()
+
+        if choice in ("y", "n"):
+            return choice == "y"
+
+        print("Invalid input. Please enter 'y' or 'n'.\n")
