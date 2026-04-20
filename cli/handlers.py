@@ -1,4 +1,5 @@
 import asyncio
+from cli.menus import post_login_menu
 from cli.prompts import prompt_email, prompt_password, prompt_username
 from cli.api_client import login_request, play_as_guest_request, register_request
 
@@ -10,8 +11,19 @@ def handle_login():
 
     if response.status_code == 200:
         data = response.json()
-        print("\nLogin successful!")
-        print(f"\nAccess token: {data['access_token']}\n")
+        token = data["access_token"]
+
+        print("\n✅ Login successful!\n")
+
+        choice = post_login_menu()
+
+        if choice == 1:
+            print("Start New Game selected")
+        elif choice == 2:
+            print("Resume Game selected")
+        elif choice == 3:
+            print("Logout selected")
+            return
     else:
         print("\n Login failed")
         print(response.json())
