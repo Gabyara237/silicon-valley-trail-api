@@ -1,6 +1,6 @@
 
 
-from cli.display import display_game_intro, display_game_over, display_game_status, display_press_enter_message, display_victory
+from cli.display import display_game_intro, display_game_over, display_game_status, display_victory
 from cli.game_handlers import handle_abandon_game, handle_ai_advice, handle_game_action, handle_save_game
 from cli.menus import game_menu, guest_game_menu
 

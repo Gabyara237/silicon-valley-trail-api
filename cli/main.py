@@ -1,5 +1,6 @@
 
 from cli.display import display_option_title, display_rules
+from cli.game_loop import guest_game_loop
 from cli.handlers import handle_login, handle_play_as_guest, handle_quit, handle_register
 from cli.menus import welcome_menu
 
@@ -21,7 +22,7 @@ def run():
             game = handle_play_as_guest()
 
             if game:
-                print("Starting game...")
+                guest_game_loop(game, is_new_game=True)
 
         elif choice == 4:
             display_rules()
