@@ -102,3 +102,14 @@ async def save_game_request(game_id: int, token: str):
         url = f"{BASE_URL}/games/{game_id}/save"
         response = await client.post(url, headers=headers)
         return response
+    
+
+async def resume_game_request(game_id: int, token: str):
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/games/{game_id}/resume"
+        response = await client.post(url, headers=headers)
+        return response

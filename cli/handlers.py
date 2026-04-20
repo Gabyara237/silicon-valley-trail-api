@@ -3,7 +3,7 @@ from cli.display import display_option_title
 from cli.game_loop import game_loop
 from cli.menus import  post_login_menu_no_active_game, post_login_menu_with_active_game
 from cli.prompts import prompt_email, prompt_password, prompt_username
-from cli.api_client import  create_new_game_request, get_active_game_request, login_request, play_as_guest_request, register_request
+from cli.api_client import  create_new_game_request, get_active_game_request, login_request, play_as_guest_request, register_request, resume_game_request
 
 def handle_login():
     email = prompt_email()
@@ -88,12 +88,23 @@ def handle_post_login_menu(token: str):
                 game_loop(game, token, True)
         elif choice == 2:
             print("\nLogout selected")
+        return
 
     else:
+        game_id = active_game.get("id")
+        status = active_game.get("status")
         choice = post_login_menu_with_active_game()
 
         if choice == 1:
-            print("\nResume Game selected")
+            display_option_title("Resume Game")
+            if status == "saved":
+                game = handle_resume_game(game_id, token)
+                if game:
+                    game_loop(game, token, False)
+            else:
+                print("\nThis game is not in a saved state.\n")
+
+
         elif choice == 2:
             display_option_title("Start New Game")
             game = handle_start_new_game(token)
@@ -121,3 +132,24 @@ def handle_start_new_game(token: str):
 
 
 
+def handle_resume_game(game_id: int, token: str):
+    if game_id is None:
+        print("\nNo saved game found.\n")
+        return None
+    
+    print("\n▶️ Resuming saved game...\n")
+
+    response = asyncio.run(resume_game_request(game_id, token))
+
+    if response.status_code == 200:
+        game = response.json()
+        print("✅ Game resumed successfully!\n")
+        return game
+
+    print("\nFailed to resume game.")
+    try:
+        print(response.json())
+    except Exception:
+        print(response.text)
+
+    return None

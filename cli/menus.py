@@ -81,15 +81,15 @@ def game_menu():
         print("8) Back              - Return to the previous menu\n")
 
         try:
-            choice = int(input("Choose your action (1-7): "))
+            choice = int(input("Choose your action (1-8): "))
         except ValueError:
             print("\nInvalid input. Please enter a number.\n")
             continue
 
-        if is_valid(choice, 1, 7):
+        if is_valid(choice, 1, 8):
             return choice
 
-        print("\nInvalid option. Please choose a number between 1 and 7.\n")
+        print("\nInvalid option. Please choose a number between 1 and 8.\n")
 
 
 def event_choice_menu(event: dict):
