@@ -1,10 +1,16 @@
+
+from cli.display import display_option_title
+from cli.handlers import handle_login
 from cli.menus import welcome_menu
+
 
 def run():
     choice = welcome_menu()
 
     if choice == 1:
-        print("Login selected")
+        display_option_title("Login")
+        handle_login()
+
     elif choice == 2:
         print("Register selected")
     elif choice == 3:
