@@ -14,6 +14,14 @@ The project consists of:
 - A **CLI frontend** that acts as the interactive game interface
 
 ---
+ 
+## Demo
+ 
+> Travel action with real-time weather data (Open-Meteo), traffic simulation (Google Routes API), a random event trigger, and an AI strategy recommendation powered by Google Gemini — all in a single run.
+ 
+https://github.com/user-attachments/assets/2c8e31ca-9b0d-46fd-830b-3072765c4171
+ 
+---
 
 ## Description
 
@@ -28,6 +36,55 @@ The game is built as a distributed system: the backend handles all state, logic,
 - **Backend Repository:**
   [View the Silicon Valley Trail API on GitHub](https://github.com/Gabyara237/silicon-valley-trail-api)
 
+---
+ 
+## Screenshots
+ 
+### Entry point
+The main menu supports three player paths - login, register, or instant guest play — each routing to a different backend flow.
+
+![Welcome screen](https://i.postimg.cc/7hqMJR0G/welcome.png)
+
+
+### Guest game menu  
+Guest users see a simplified version of the menu, with core gameplay actions only. Features like save/resume, AI strategy advice, and traffic-aware travel are available only to authenticated users.
+
+![Guest game menu](https://i.postimg.cc/XqncBPdy/game-menu-guest.png)
+
+### Authenticated game menu
+Logged-in users get the full feature set: save/resume sessions, AI strategy advice, and traffic-aware travel. 
+ 
+![Authenticated game menu](https://i.postimg.cc/yx7X3Gc0/game-menu-auth.png)
+ 
+### Save & resume flow
+Game state is fully persisted in PostgreSQL. Players can save mid-run and resume exactly where they left off across sessions.
+ 
+![Saving a game](https://i.postimg.cc/WtLV7Mpt/save-game.png)
+ 
+![Resuming a saved game](https://i.postimg.cc/qgVrG8Bz/resume-game.png)
+ 
+### AI Strategy Advisor
+The AI advisor analyzes the current game state and recommends the best next action with a brief explanation. Available to authenticated users only.
+ 
+![AI Strategy Advice response](https://i.postimg.cc/3W5hZgrR/ai-advice.png)
+ 
+### Real-time travel updates
+The Travel action pulls live data from Open-Meteo (weather) and Google Routes API (traffic). Both modifiers are applied to resource changes and displayed to the player before the next turn.
+ 
+![Weather and traffic updates during travel](https://i.postimg.cc/MHzbfLVV/travel-updates.png)
+ 
+### Random event system
+Events are triggered after travel actions. Each event presents a contextual scenario with 2–3 choices, and the player's decision directly affects their resource state.
+ 
+![Random event: Coffee Shortage](https://i.postimg.cc/ZnJFvQpd/random-event.png)
+ 
+### Win & loss screens
+The game tracks all six resources continuously. Reaching 100% travel progress triggers the victory screen; energy or cash hitting zero ends the run.
+ 
+![Victory — startup reaches San Francisco](https://i.postimg.cc/4xHtyGq1/victory.png)
+ 
+![Game over — team runs out of energy](https://i.postimg.cc/BbJcPzHP/game-over.png)
+ 
 ---
 
 ## Core Features
@@ -274,6 +331,7 @@ silicon-valley-trail-api/
  
 - Python 3.11+
 - PostgreSQL
+
 ### 1. Clone the repository
  
 ```bash
